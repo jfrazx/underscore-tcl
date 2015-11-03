@@ -6,7 +6,7 @@
 # This package provides a collection of different utility methods, that try to
 # bring functional programming aspects known from other programming languages
 # like Ruby or JavaScript to Tcl.
-package provide underscore 0.1
+package provide underscore 0.3
 
 namespace eval _ {
     # Yields a block of code in a specific stack-level.
@@ -137,7 +137,7 @@ namespace eval _ {
         set count [llength $list]
 
         for { set i 0 } { $i < [llength $list] } { incr i } {
-            _::yield $iterator $item $i
+            _::yield $iterator [lindex $list $i] $i
         }
 
         return $list
@@ -302,10 +302,14 @@ namespace eval _ {
 
     # Returns a sorted copy of list. Sorting is based on the return
     # values of the execution of the iterator for each item.
+    #
+    # @example
+    #   _::sort_by [list testings len of strings sort] {{ item } { return [string length $item] }}
+    # => { of len sort strings testings }
     proc sort_by { list iterator } {
         set list_to_sort [_::map $list {{item} {
             upvar iterator iterator
-            list [uplevel [list yield $iterator $item] $item
+            list [uplevel [list _::yield $iterator $item]] $item
         }}]
 
         set sorted_list [lsort $list_to_sort]

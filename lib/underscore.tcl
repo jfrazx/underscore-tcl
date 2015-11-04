@@ -337,7 +337,7 @@ namespace eval _ {
             lappend result $item
         }
 
-        return $item
+        return $result 
     }
 
     proc group_by { list iterator } {
